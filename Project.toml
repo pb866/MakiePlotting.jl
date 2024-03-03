@@ -1,0 +1,4 @@
+name = "MakiePlotting"
+uuid = "fd01c4ec-b47c-4be4-b0c4-70290014455d"
+authors = ["Peter Bräuer <pb866.git@gmail.com>"]
+version = "0.1.0"
