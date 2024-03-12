@@ -1,8 +1,8 @@
 ## Functions to create barplots
-
+# TODO add kwarg with switch for different default layouts
 
 """
-    function figure(
+    figure(
       datasets::Vector{T} where T<:Real,
       labels::Vector{String},
       xmax::Union{Nothing,Int}=nothing;
@@ -11,30 +11,52 @@
       ylabel="",
       smallfont=20,
       largefont=26,
+      colourscheme::Union{Bool,Symbol}=false,
       barcolours=:grey,
-      colours_overbar=:white,
+      colours_overbar=nothing,
       colours_overbg=:grey,
+      colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
+      colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+      brightness::T where T<:AbstractFloat=0.6,
       axisposition::Symbol=:top,
       showframe::Bool=false,
       formatfunction::Function=Makie.bar_label_formatter,
-      flipthreshold::Real=Inf
+      flipthreshold::Real=Inf,
+      cycle::Bool=true
     )::Tuple{Figure,Axis}
 
 Generate a horizontal barplot and return the figure and axis handle.
 The properties of the figure and axes can be adjusted afterwards, if the parameters
 of this function do not satisfy the formatting needs.
 
+
+# Extended help
+
 Bars are generate from data in `datasets` and labelled with `labels`.
-The graph width can be restricted to `xmax`. The overall figure `size` can be given
+The graph width can be set to `xmax`. The overall figure `size` can be given
 as tuple of `(width, height)`. Axes labels are defined by `xlabel` and `ylabel`,
 2 font sizes can be used by default: `smallfont` and `largefont.`
 
 Colours can be defined for bars (`barcolours`), the font over and next to bars
-(`colours_overbar` and `colours_overbg`, respectively). If you want a frame around
-the graph, set `showframe` to `true`. The horizontal axis position can be chosen
-with `axisposition` as `:top` or `:bottom`. A `formatfunction` can be given as anonymous
-function to format labels of the individual bars. Define `flipthreshold` at which
-bar labels switch from overbar labels to labels next to bars.
+(`colours_overbar` and `colours_overbg`, respectively). Either one overbar colour
+can be specified in any valid Makie format or a `NamedTuple` with entries `:dark`
+and `bright` for dark and bright bars. Colour brightness is determined automatically
+and can be adjusted with the `brightness` argument by giving a percentage between
+`0` and `1`.
+
+Instead of giving a colour vector directly, a `colourscheme` can be chosen, which
+can be restricted to the `colourscheme_start` and `colourscheme_stop`.
+The start/stop values can be given as index or as percentage float between
+`0` and `1`. If set, colours outside `colourscheme_start` and `colourscheme_stop`
+are ignored. Colours a stretched to extend over the whole scheme evenly distributed.
+If more colours are needed than in the scheme, colours are chosen from the beginning
+again. This `cycle` behaviour can be switched off, and a `BoundsError` is thrown instead.
+
+To show all 4 axes, set `showframe` to `true`. The horizontal axis position can be
+chosen with `axisposition` as `:top` or `:bottom`, which also affect labelling.
+A `formatfunction` can be given as anonymous function to format labels of the
+individual bars. Define `flipthreshold` at which bar labels switch from overbar
+labels to labels next to bars.
 """
 function figure(
   datasets::Vector{T} where T<:Real,
@@ -49,13 +71,14 @@ function figure(
   barcolours=:grey,
   colours_overbar=nothing,
   colours_overbg=:grey,
-  colourscheme_start::Real=0,
-  colourscheme_stop::Real=1,
+  colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
+  colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
   brightness::T where T<:AbstractFloat=0.6,
   axisposition::Symbol=:top,
   showframe::Bool=false,
   formatfunction::Function=Makie.bar_label_formatter,
-  flipthreshold::Real=Inf
+  flipthreshold::Real=Inf,
+  cycle::Bool=true
 )::Tuple{Figure,Axis}
   # Set colour scheme
   if isnothing(colours_overbar)
@@ -68,9 +91,11 @@ function figure(
       fontcolour = colours_overbar,
       start = colourscheme_start,
       stop = colourscheme_stop;
+      cycle,
       brightness
     )
   end
+  @show barcolours
   # Setup plot
   fig = Figure(;size)
   ax = Axis(fig[1,1],
@@ -112,7 +137,7 @@ end
 
 
 """
-    function hbar(
+    hbar(
       file::String,
       datasets::Vector{T} where T<:Real,
       labels::Vector{String},
@@ -123,14 +148,19 @@ end
       ylabel="",
       smallfont=20,
       largefont=26,
+      colourscheme::Union{Bool,Symbol}=false,
       barcolours=:grey,
-      colours_overbar=(:white, 0.8),
+      colours_overbar=nothing,
       colours_overbg=:grey,
+      colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
+      colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+      brightness::T where T<:AbstractFloat=0.6,
       axisposition::Symbol=:top,
       showframe::Bool=false,
       formatfunction::Function=x->x,
-      flipthreshold::Union{Nothing,Real}=nothing
-)::Nothing
+      flipthreshold::Union{Nothing,Real}=nothing,
+      cycle::Bool=true
+    )::Nothing
 
 Uses function `figure` to create a horizontal barplot and save to `file` in directory `dir`.
 If no `dir` is given, the current directory is used. Alternatively, the directory can be
@@ -153,13 +183,14 @@ function hbar(
   barcolours=:grey,
   colours_overbar=nothing,
   colours_overbg=:grey,
-  colourscheme_start::Real=0,
-  colourscheme_stop::Real=1,
+  colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
+  colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
   brightness::T where T<:AbstractFloat=0.6,
   axisposition::Symbol=:top,
   showframe::Bool=false,
   formatfunction::Function=x->x,
-  flipthreshold::Union{Nothing,Real}=nothing
+  flipthreshold::Union{Nothing,Real}=nothing,
+  cycle::Bool=true
 )::Nothing
   # Define output file
   if !contains(file, "/")
@@ -168,7 +199,7 @@ function hbar(
   fig, ax = figure(datasets, labels, xmax; size, xlabel, ylabel, smallfont, largefont,
     colourscheme, barcolours, colours_overbar, colours_overbg,
     colourscheme_start, colourscheme_stop, brightness,
-    axisposition, showframe, formatfunction, flipthreshold)
+    axisposition, showframe, formatfunction, flipthreshold, cycle)
   save(file, fig)
   return
 end

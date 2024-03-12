@@ -1,7 +1,7 @@
 module MakiePlotting
 
 # Import packages
-using Makie #, CairoMakie, Format
+using Makie, CairoMakie#, Format
 using ColorSchemes
 # Include MakiePlotting modules
 include("barplot.jl")
