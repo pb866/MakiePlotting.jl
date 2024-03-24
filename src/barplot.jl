@@ -2,11 +2,11 @@
 # TODO add kwarg with switch for different default layouts
 
 """
-    figure(
+    hbar_scene(
       datasets::Vector{<:Real},
       labels::Vector{String},
       xmax::Union{Nothing,Int}=nothing;
-      size::Tuple{Int,Int}=(600,450),
+      size::Tuple{Int,Int}=(800, 600),
       xlabel="",
       ylabel="",
       smallfont=20,
@@ -64,11 +64,11 @@ A `formatfunction` can be given as anonymous function to format labels of the
 individual bars. Define `flipthreshold` at which bar labels switch from overbar
 labels to labels next to bars.
 """
-function figure(
+function hbar_scene(
   datasets::Vector{<:Real},
   labels::Vector{String},
   xmax::Union{Nothing,Int}=nothing;
-  size::Tuple{Int,Int}=(600,450),
+  size::Tuple{Int,Int}=(800, 600),
   xlabel="",
   ylabel="",
   smallfont=20,
@@ -150,7 +150,7 @@ end
       labels::Vector{String},
       xmax::Union{Nothing,Int}=nothing;
       dir::String=".",
-      size = (600, 450),
+      size = (800, 600),
       xlabel="",
       ylabel="",
       smallfont=20,
@@ -166,7 +166,7 @@ end
       axisposition::Symbol=:top,
       showframe::Bool=false,
       formatfunction::Function=x->x,
-      flipthreshold::Union{Nothing,Real}=nothing,
+      flipthreshold::Real=Inf,
       cycle::Bool=true
     )::Nothing
 
@@ -182,7 +182,7 @@ function hbar(
   labels::Vector{String},
   xmax::Union{Nothing,Int}=nothing;
   dir::String=".",
-  size = (600, 450),
+  size = (800, 600),
   xlabel="",
   ylabel="",
   smallfont=20,
@@ -198,14 +198,14 @@ function hbar(
   axisposition::Symbol=:top,
   showframe::Bool=false,
   formatfunction::Function=x->x,
-  flipthreshold::Union{Nothing,Real}=nothing,
+  flipthreshold::Real=Inf,
   cycle::Bool=true
 )::Nothing
   # Define output file
   if !contains(file, "/")
     file = joinpath(dir, file)
   end
-  fig, ax = figure(datasets, labels, xmax; size, xlabel, ylabel, smallfont, largefont,
+  fig, ax = hbar_scene(datasets, labels, xmax; size, xlabel, ylabel, smallfont, largefont,
     colourscheme, barcolours, colours_overbar, colours_overbg,
     colourscheme_start, colourscheme_stop, colourscheme_stepwidth, brightness,
     axisposition, showframe, formatfunction, flipthreshold, cycle)
