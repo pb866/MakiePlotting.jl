@@ -3,7 +3,7 @@
 
 """
     figure(
-      datasets::Vector{T} where T<:Real,
+      datasets::Vector{<:Real},
       labels::Vector{String},
       xmax::Union{Nothing,Int}=nothing;
       size::Tuple{Int,Int}=(600,450),
@@ -15,8 +15,9 @@
       barcolours=:grey,
       colours_overbar=nothing,
       colours_overbg=:grey,
-      colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
-      colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+      colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
+      colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
+      colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
       brightness::T where T<:AbstractFloat=0.6,
       axisposition::Symbol=:top,
       showframe::Bool=false,
@@ -48,7 +49,12 @@ Instead of giving a colour vector directly, a `colourscheme` can be chosen, whic
 can be restricted to the `colourscheme_start` and `colourscheme_stop`.
 The start/stop values can be given as index or as percentage float between
 `0` and `1`. If set, colours outside `colourscheme_start` and `colourscheme_stop`
-are ignored. Colours a stretched to extend over the whole scheme evenly distributed.
+are ignored. Colours a stretched to extend over the whole scheme evenly distributed
+by default. If an integer is set for `colourscheme_stepwidth`, every nth colour
+defined by the `colourscheme_stepwidth` will be chosen from the `colourscheme` between
+`colourscheme_start` and `colourscheme_stop`. Alternatively, a float can be defined
+between `0` and `1`. In this case, colours will be picked from the `colourscheme`, if there
+is a minimum brightness difference between them as defined by the `colourscheme_stepwidth`.
 If more colours are needed than in the scheme, colours are chosen from the beginning
 again. This `cycle` behaviour can be switched off, and a `BoundsError` is thrown instead.
 
@@ -59,7 +65,7 @@ individual bars. Define `flipthreshold` at which bar labels switch from overbar
 labels to labels next to bars.
 """
 function figure(
-  datasets::Vector{T} where T<:Real,
+  datasets::Vector{<:Real},
   labels::Vector{String},
   xmax::Union{Nothing,Int}=nothing;
   size::Tuple{Int,Int}=(600,450),
@@ -71,8 +77,9 @@ function figure(
   barcolours=:grey,
   colours_overbar=nothing,
   colours_overbg=:grey,
-  colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
-  colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+  colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
+  colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
+  colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
   brightness::T where T<:AbstractFloat=0.6,
   axisposition::Symbol=:top,
   showframe::Bool=false,
@@ -90,12 +97,12 @@ function figure(
       scheme = colourscheme,
       fontcolour = colours_overbar,
       start = colourscheme_start,
-      stop = colourscheme_stop;
+      stop = colourscheme_stop,
+      stepwidth = colourscheme_stepwidth;
       cycle,
       brightness
     )
   end
-  @show barcolours
   # Setup plot
   fig = Figure(;size)
   ax = Axis(fig[1,1],
@@ -139,7 +146,7 @@ end
 """
     hbar(
       file::String,
-      datasets::Vector{T} where T<:Real,
+      datasets::Vector{<:Real},
       labels::Vector{String},
       xmax::Union{Nothing,Int}=nothing;
       dir::String=".",
@@ -152,8 +159,9 @@ end
       barcolours=:grey,
       colours_overbar=nothing,
       colours_overbg=:grey,
-      colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
-      colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+      colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
+      colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
+      colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
       brightness::T where T<:AbstractFloat=0.6,
       axisposition::Symbol=:top,
       showframe::Bool=false,
@@ -170,7 +178,7 @@ See function `figure` for help of the parameters for plot formatting.
 """
 function hbar(
   file::String,
-  datasets::Vector{T} where T<:Real,
+  datasets::Vector{<:Real},
   labels::Vector{String},
   xmax::Union{Nothing,Int}=nothing;
   dir::String=".",
@@ -183,8 +191,9 @@ function hbar(
   barcolours=:grey,
   colours_overbar=nothing,
   colours_overbg=:grey,
-  colourscheme_start::Union{<:AbstractFloat,Int} = -Inf,
-  colourscheme_stop::Union{<:AbstractFloat,Int} = Inf,
+  colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
+  colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
+  colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
   brightness::T where T<:AbstractFloat=0.6,
   axisposition::Symbol=:top,
   showframe::Bool=false,
@@ -198,7 +207,7 @@ function hbar(
   end
   fig, ax = figure(datasets, labels, xmax; size, xlabel, ylabel, smallfont, largefont,
     colourscheme, barcolours, colours_overbar, colours_overbg,
-    colourscheme_start, colourscheme_stop, brightness,
+    colourscheme_start, colourscheme_stop, colourscheme_stepwidth, brightness,
     axisposition, showframe, formatfunction, flipthreshold, cycle)
   save(file, fig)
   return
