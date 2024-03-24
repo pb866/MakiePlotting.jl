@@ -1,4 +1,9 @@
 name = "MakiePlotting"
 uuid = "fd01c4ec-b47c-4be4-b0c4-70290014455d"
 authors = ["Peter Bräuer <pb866.git@gmail.com>"]
-version = "0.1.0"
+version = "0.1.0-DEV"
+
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
