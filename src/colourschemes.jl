@@ -108,6 +108,40 @@ function colourpicker(
   pickcolours(scheme, datapoints, cycle, start, stop, stepwidth)
 end
 
+"""
+Function `pickcolours` with two methods.
+
+    pickcolours(
+      scheme::Vector{ColorSchemes.ColorTypes.RGB{Float64}},
+      datapoints::Int,
+      cycle::Bool,
+      start::Int,
+      stop::Int,
+      stepwidth::Int
+    )::Vector{ColorSchemes.ColorTypes.RGB{Float64}}
+
+    function pickcolours(
+      scheme::Vector{ColorSchemes.ColorTypes.RGB{Float64}},
+      datapoints::Int,
+      cycle::Bool,
+      start::Int,
+      stop::Int,
+      stepwidth::T where T<:AbstractFloat
+    )::Vector{ColorSchemes.ColorTypes.RGB{Float64}}
+
+Returns an RGB colour vector with selected colours from the given `scheme` colour vector.
+The number of returned colours is restricted to `datapoints`. The selection of the scheme
+can be restricted to colours between a `start` and/or `stop` index.
+The `stepwidth` can be given as `Int` directly constructing a range as `start:stepwidth:stop`
+or as float between `0` and `1`. In this case the stepwidth is determined by the difference in
+brightness of the colours in the scheme. Consecutive colours needed a difference in the brightness
+value above the given threshold.
+
+If more colours are needed than available in the given colour range, `pickcolours` will cycle
+through the `scheme` several time starting to select already chosen colours from the beginning.
+If cycle is set to `false`, then a `BoundsError` is thrown instead.
+"""
+function pickcolours end
 
 function pickcolours(
   scheme::Vector{ColorSchemes.ColorTypes.RGB{Float64}},

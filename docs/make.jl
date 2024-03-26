@@ -7,7 +7,19 @@ makedocs(
     sitename = "MakiePlotting",
     format = Documenter.HTML(),
     modules = [MakiePlotting],
-    checkdocs=:exports
+    # checkdocs=:exports,
+    pages = [
+        "Home" => "index.md",
+        # "installation.md",
+        "Manual" => [
+            "bar plot" => "man/barplot.md"
+        ],
+        "Developers" => [
+            "Adapting code" => "dev/adapt.md",
+            "Functions" => "dev/functions.md"
+        ],
+        "code_index.md"
+    ]
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
