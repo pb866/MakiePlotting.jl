@@ -1,82 +1,30 @@
 ## Functions to create barplots
 # TODO add kwarg with switch for different default layouts
-
 """
-    hbar_scene(
-      datasets::Vector{<:Real},
-      labels::Vector{String},
-      xmax::Union{Nothing,Int}=nothing;
-      size::Tuple{Int,Int}=(800, 600),
-      xlabel="",
-      ylabel="",
-      smallfont=20,
-      largefont=26,
-      colourscheme::Union{Bool,Symbol}=false,
-      barcolours=:grey,
-      colours_overbar=nothing,
-      colours_overbg=:grey,
-      colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
-      colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
-      colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
-      brightness::T where T<:AbstractFloat=0.6,
-      axisposition::Symbol=:top,
-      showframe::Bool=false,
-      formatfunction::Function=Makie.bar_label_formatter,
-      flipthreshold::Real=Inf,
-      cycle::Bool=true
-    )::Tuple{Figure,Axis}
+    hbar_scene(datasets::Vector{<:Real}, labels::Vector{String}; kwargs...)::Tuple{Figure,Axis}
 
-Generate a horizontal barplot and return the figure and axis handle.
+Generate a horizontal bar plot and return the figure and axis handle.
 The properties of the figure and axes can be adjusted afterwards, if the parameters
 of this function do not satisfy the formatting needs.
 
+Standard bar plots are generated from data in `datasets` labelled with `labels`.
+Keyword arguments can be used to influence to plot design.
 
-# Extended help
-
-Bars are generate from data in `datasets` and labelled with `labels`.
-The graph width can be set to `xmax`. The overall figure `size` can be given
-as tuple of `(width, height)`. Axes labels are defined by `xlabel` and `ylabel`,
-2 font sizes can be used by default: `smallfont` and `largefont.`
-
-Colours can be defined for bars (`barcolours`), the font over and next to bars
-(`colours_overbar` and `colours_overbg`, respectively). Either one overbar colour
-can be specified in any valid Makie format or a `NamedTuple` with entries `:dark`
-and `bright` for dark and bright bars. Colour brightness is determined automatically
-and can be adjusted with the `brightness` argument by giving a percentage between
-`0` and `1`.
-
-Instead of giving a colour vector directly, a `colourscheme` can be chosen, which
-can be restricted to the `colourscheme_start` and `colourscheme_stop`.
-The start/stop values can be given as index or as percentage float between
-`0` and `1`. If set, colours outside `colourscheme_start` and `colourscheme_stop`
-are ignored. Colours a stretched to extend over the whole scheme evenly distributed
-by default. If an integer is set for `colourscheme_stepwidth`, every nth colour
-defined by the `colourscheme_stepwidth` will be chosen from the `colourscheme` between
-`colourscheme_start` and `colourscheme_stop`. Alternatively, a float can be defined
-between `0` and `1`. In this case, colours will be picked from the `colourscheme`, if there
-is a minimum brightness difference between them as defined by the `colourscheme_stepwidth`.
-If more colours are needed than in the scheme, colours are chosen from the beginning
-again. This `cycle` behaviour can be switched off, and a `BoundsError` is thrown instead.
-
-To show all 4 axes, set `showframe` to `true`. The horizontal axis position can be
-chosen with `axisposition` as `:top` or `:bottom`, which also affect labelling.
-A `formatfunction` can be given as anonymous function to format labels of the
-individual bars. Define `flipthreshold` at which bar labels switch from overbar
-labels to labels next to bars.
+$HBAR_KWARGS
 """
 function hbar_scene(
   datasets::Vector{<:Real},
-  labels::Vector{String},
-  xmax::Union{Nothing,Int}=nothing;
+  labels::Vector{<:AbstractString};
   size::Tuple{Int,Int}=(800, 600),
-  xlabel="",
-  ylabel="",
+  xmax::Union{Nothing,<:Real}=nothing,
+  xlabel::T where T<:AbstractString="",
+  ylabel::T where T<:AbstractString="",
   smallfont=20,
   largefont=26,
-  colourscheme::Union{Bool,Symbol}=false,
   barcolours=:grey,
   colours_overbar=nothing,
   colours_overbg=:grey,
+  colourscheme::Union{Bool,Symbol}=false,
   colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
   colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
   colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
@@ -87,6 +35,10 @@ function hbar_scene(
   flipthreshold::Real=Inf,
   cycle::Bool=true
 )::Tuple{Figure,Axis}
+  # Check input data
+  if length(datasets) == length(labels)
+    @warn "number of datasets and labels unequal"
+  end
   # Set colour scheme
   if isnothing(colours_overbar)
     colours_overbar = colourscheme === false ? (:white, 0.7) : (; :dark=>:midnightblue, :bright=>(:white, 0.7))
@@ -144,71 +96,22 @@ end
 
 
 """
-    hbar(
-      file::String,
-      datasets::Vector{<:Real},
-      labels::Vector{String},
-      xmax::Union{Nothing,Int}=nothing;
-      dir::String=".",
-      size = (800, 600),
-      xlabel="",
-      ylabel="",
-      smallfont=20,
-      largefont=26,
-      colourscheme::Union{Bool,Symbol}=false,
-      barcolours=:grey,
-      colours_overbar=nothing,
-      colours_overbg=:grey,
-      colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
-      colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
-      colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
-      brightness::T where T<:AbstractFloat=0.6,
-      axisposition::Symbol=:top,
-      showframe::Bool=false,
-      formatfunction::Function=x->x,
-      flipthreshold::Real=Inf,
-      cycle::Bool=true
-    )::Nothing
+    hbar(file::String, datasets::Vector{<:Real}, labels::Vector{String}, dir::String=".", kwargs...)::Nothing
 
-Uses function `figure` to create a horizontal barplot and save to `file` in directory `dir`.
+Uses function `hbar_scene` to create a horizontal barplot and save to `file` in directory `dir`.
 If no `dir` is given, the current directory is used. Alternatively, the directory can be
 given in the file name in which case `dir` is ignored.
 
-See function `figure` for help of the parameters for plot formatting.
+Arguments and keyword arguments needed for plotting are explained below.
+
+$HBAR_KWARGS
 """
-function hbar(
-  file::String,
-  datasets::Vector{<:Real},
-  labels::Vector{String},
-  xmax::Union{Nothing,Int}=nothing;
-  dir::String=".",
-  size = (800, 600),
-  xlabel="",
-  ylabel="",
-  smallfont=20,
-  largefont=26,
-  colourscheme::Union{Bool,Symbol}=false,
-  barcolours=:grey,
-  colours_overbar=nothing,
-  colours_overbg=:grey,
-  colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
-  colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
-  colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
-  brightness::T where T<:AbstractFloat=0.6,
-  axisposition::Symbol=:top,
-  showframe::Bool=false,
-  formatfunction::Function=x->x,
-  flipthreshold::Real=Inf,
-  cycle::Bool=true
-)::Nothing
+function hbar(file::String, args...; dir=".", kwargs...)::Nothing
   # Define output file
   if !contains(file, "/")
     file = joinpath(dir, file)
   end
-  fig, ax = hbar_scene(datasets, labels, xmax; size, xlabel, ylabel, smallfont, largefont,
-    colourscheme, barcolours, colours_overbar, colours_overbg,
-    colourscheme_start, colourscheme_stop, colourscheme_stepwidth, brightness,
-    axisposition, showframe, formatfunction, flipthreshold, cycle)
+  fig, ax = hbar_scene(args...; kwargs...)
   save(file, fig)
   return
 end

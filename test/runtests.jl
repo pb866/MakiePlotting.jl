@@ -1,6 +1,8 @@
 using MakiePlotting
 using Test
 
+# TODO add Docs.undocumented_names(module) test, when v1.11 is available
+
 @testset "Makie Plotting tests" begin
 
     @testset "Conversions" begin
