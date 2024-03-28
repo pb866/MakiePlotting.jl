@@ -6,7 +6,7 @@
       start::Union{Int,<:AbstractFloat,} = -Inf,
       stop::Union{Int,<:AbstractFloat,} = Inf,
       cycle::Bool=true,
-      brightness::T where T<:AbstractFloat=0.6
+      brightness::AbstractFloat=0.6
     )
 
 For the number of `datapoints`, pick colours from the given colour `scheme` and
@@ -33,7 +33,7 @@ function colours(
   stop::Union{Int,<:AbstractFloat} = Inf,
   stepwidth::Union{<:AbstractFloat,Int} = 0,
   cycle::Bool=true,
-  brightness::T where T<:AbstractFloat=0.6
+  brightness::AbstractFloat=0.6
 )
   # Set colour scheme
   colourscheme = colorschemes[scheme].colors
@@ -126,7 +126,7 @@ Function `pickcolours` with two methods.
       cycle::Bool,
       start::Int,
       stop::Int,
-      stepwidth::T where T<:AbstractFloat
+      stepwidth::AbstractFloat
     )::Vector{ColorSchemes.ColorTypes.RGB{Float64}}
 
 Returns an RGB colour vector with selected colours from the given `scheme` colour vector.
@@ -184,7 +184,7 @@ function pickcolours(
   cycle::Bool,
   start::Int,
   stop::Int,
-  stepwidth::T where T<:AbstractFloat
+  stepwidth::AbstractFloat
 )::Vector{ColorSchemes.ColorTypes.RGB{Float64}}
   # Check stepwidth range
   !(0 < stepwidth < 1) && throw(DomainError(stepwidth, "stepwidth must be between 0 and 1 or valid index of colour scheme"))

@@ -12,7 +12,7 @@ makedocs(
         "Home" => "index.md",
         # "installation.md",
         "Manual" => [
-            "bar plot" => "man/barplot.md"
+            "horizontal bar plot" => "man/hbar.md"
         ],
         "Developers" => [
             "Adapting code" => "dev/adapt.md",

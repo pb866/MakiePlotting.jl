@@ -12,9 +12,9 @@ const HBAR_KWARGS = """
   Tuple of Ints with width and height (default: 800x600).
 - `xmax::Union{Nothing,Int}=nothing`: Adjust the axis length of the bar plot by
   giving a maximum value as real.
-- `xlabel::T where T<:AbstractString=""`: Label of the x-axis. Can be a simple string
+- `xlabel::AbstractString=""`: Label of the x-axis. Can be a simple string
   or, e.g., a `LaTeXString` for mor complex labels.
-- `ylabel::T where T<:AbstractString=""`: Label of the y-axis. Can be a simple string
+- `ylabel::AbstractString=""`: Label of the y-axis. Can be a simple string
   or, e.g., a `LaTeXString` for mor complex labels.
 - `smallfont=20`: By default, MakiePlotting uses 2 font sizes. Small fonts are used for tick labels.
 - `largefont=26`: By default, MakiePlotting uses 2 font sizes. Large fonts are used for
@@ -56,7 +56,7 @@ const HBAR_KWARGS = """
   which directly sets the stepwidth or a floating value. When given a Floating value, the
   brightness value of each colour is determined, and colours from a scheme are picked so
   consecutive colours exceed the threshold in brightness given. (see also next point)
-- `brightness::T where T<:AbstractFloat=0.6`: RGB colour brightness is determined by the
+- `brightness::AbstractFloat=0.6`: RGB colour brightness is determined by the
   formula ``brightness = 0.299red + 0.587green + 0.114blue``. The brightness value is
   used to separate darker from brighter colours. A threshold can be given to used a bright
   and a dark font over bars depending on the brightness threshold.

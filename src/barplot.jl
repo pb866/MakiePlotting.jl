@@ -17,8 +17,8 @@ function hbar_scene(
   labels::Vector{<:AbstractString};
   size::Tuple{Int,Int}=(800, 600),
   xmax::Union{Nothing,<:Real}=nothing,
-  xlabel::T where T<:AbstractString="",
-  ylabel::T where T<:AbstractString="",
+  xlabel::AbstractString="",
+  ylabel::AbstractString="",
   smallfont=20,
   largefont=26,
   barcolours=:grey,
@@ -28,7 +28,7 @@ function hbar_scene(
   colourscheme_start::Union{Int,<:AbstractFloat} = -Inf,
   colourscheme_stop::Union{Int,<:AbstractFloat} = Inf,
   colourscheme_stepwidth::Union{Int,<:AbstractFloat} = 0,
-  brightness::T where T<:AbstractFloat=0.6,
+  brightness::AbstractFloat=0.6,
   axisposition::Symbol=:top,
   showframe::Bool=false,
   formatfunction::Function=Makie.bar_label_formatter,
@@ -36,7 +36,7 @@ function hbar_scene(
   cycle::Bool=true
 )::Tuple{Figure,Axis}
   # Check input data
-  if length(datasets) == length(labels)
+  if length(datasets) ≠ length(labels)
     @warn "number of datasets and labels unequal"
   end
   # Set colour scheme

@@ -2,7 +2,7 @@
 
 ```@index
 Pages = [
-  "man/barplot.md",
+  "man/hbar.md",
   "dev/functions.md"
 ]
 ```

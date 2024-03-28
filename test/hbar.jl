@@ -59,8 +59,9 @@ end
   @test !isempty(ax.ylabel.val) && ax.ylabel.val == "y label"
   #* Test kwargs
   @test function_kwargs(hbar_scene,
-    [1,2,3], ["A", "B", "C"], 5,
+    [1,2,3], ["A", "B", "C"],
     size = (1200, 900),
+    xmax=5,
     xlabel="x label",
     ylabel="y label",
     smallfont=16,
@@ -79,6 +80,10 @@ end
     flipthreshold=2,
     cycle=false
   )
+  #* Test exception handling
+  @test_nowarn hbar_scene([1,2,3], ["A", "B", "C"])
+  @test_warn "number of datasets and labels unequal" hbar_scene([1,2,3], ["A", "B"])
+  @test_warn "number of datasets and labels unequal" hbar_scene([1,2,3], ["A", "B", "C", "D"])
 end
 
 @testset "hbar plot to file" begin
@@ -95,9 +100,10 @@ end
   #* Check kwargs
   @test function_kwargs(hbar,
     "test.pdf",
-    [1,2,3], ["A", "B", "C"], 5,
+    [1,2,3], ["A", "B", "C"],
     dir="plots",
     size = (1200, 900),
+    xmax=5,
     xlabel="x label",
     ylabel="y label",
     smallfont=16,
